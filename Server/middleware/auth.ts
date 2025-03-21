@@ -1,21 +1,15 @@
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { redis } from "../utils/redis";
 import { catchAsyncErrors } from "./catchAsyncErrors";
 import ErrorHandler from "../utils/ErrorHandler";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { redis } from "../utils/redis";
 
-// Extend Request type to include user
-declare global {
-    namespace Express {
-        interface Request {
+// Authenticated user interface
+export interface IAuthRequest extends Request {
             user?: any;
         }
-    }
-}
-
-// Authenticated user
-export const isAuthenticated = catchAsyncErrors(async (req: Request, res: Response, next: NextFunction) => {
-    try {
+// Authenticate user
+export const isAuthenticated = catchAsyncErrors(async (req: IAuthRequest, res: Response, next: NextFunction) => {
         const access_token = req.cookies.access_token;
 
         if (!access_token) {
@@ -35,19 +29,23 @@ export const isAuthenticated = catchAsyncErrors(async (req: Request, res: Respon
         }
 
         req.user = JSON.parse(user);
-
         next();
-    } catch (error: any) {
-        return next(new ErrorHandler(error.message, 401));
-    }
 });
 
 // Validate user role
 export const authorizeRoles = (...roles: string[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: IAuthRequest, res: Response, next: NextFunction) => {
         if (!roles.includes(req.user?.role || '')) {
             return next(new ErrorHandler(`Role (${req.user?.role}) is not allowed to access this resource`, 403));
         }
         next();
     };
+};
+
+// Authorize tutor
+export const authorizeTutor = (req: IAuthRequest, res: Response, next: NextFunction) => {
+    if (req.user?.role !== 'tutor' && req.user?.role !== 'admin') {
+        return next(new ErrorHandler('Only tutors and admins can access this resource', 403));
+    }
+    next();
 };

@@ -1,13 +1,11 @@
 import mongoose from 'mongoose';
 require("dotenv").config(); 
 
-const dbUrl: string = "mongodb+srv://sushant:sushant123@cluster0.wdcpg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Updated connection string
+const dbUrl: string = process.env.DB_URL!; // Use DB_URL from .env file, assert it is defined
 
 const connectDB = async () => {
   try {
-    if (!dbUrl) {
-      throw new Error("Database URL is missing. Check your .env file.");
-    }
+    // The dbUrl is guaranteed to be defined due to the assertion above
 
     const conn = await mongoose.connect(dbUrl, {
       serverSelectionTimeoutMS: 10000, // Wait 10s before timeout
