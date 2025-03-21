@@ -3,12 +3,14 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export interface IUser extends Document {
-    _id: string;
     name: string;
     email: string;
     password: string;
-    avatar?: string;
-    role: string;
+    avatar?: {
+        public_id: string;
+        url: string;
+    };
+    role: "admin" | "tutor" | "user";
     isVerified: boolean;
     courses: Array<{ courseId: string }>;
     comparePassword(password: string): Promise<boolean>;
@@ -39,24 +41,24 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
         select: false,
     },
     avatar: {
-        type: String,
+        public_id: String,
+        url: String,
     },
     role: {
         type: String,
+        enum: ["admin", "tutor", "user"],
         default: "user",
     },
     isVerified: {
         type: Boolean,
         default: false,
     },
-    courses: [
-        {
-            courseId: String,
-        },
-    ],
+    courses: [{
+        courseId: String,
+    }],
 }, { timestamps: true });
 
-// Hash password before saving
+// Hash password
 userSchema.pre<IUser>('save', async function(next) {
     if (!this.isModified('password')) {
         return next();

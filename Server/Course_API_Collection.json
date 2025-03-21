@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "Course Management APIs",
+    "description": "APIs for course upload and search functionality"
+  },
+  "item": [
+    {
+      "name": "Upload Course (Tutor)",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/course/upload",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "title",
+              "value": "Complete JavaScript Course",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Learn JavaScript from scratch to advanced level",
+              "type": "text"
+            },
+            {
+              "key": "category",
+              "value": "Programming",
+              "type": "text"
+            },
+            {
+              "key": "tags",
+              "value": "[\"javascript\", \"web development\", \"programming\"]",
+              "type": "text"
+            },
+            {
+              "key": "level",
+              "value": "Beginner",
+              "type": "text"
+            },
+            {
+              "key": "duration",
+              "value": "120",
+              "type": "text"
+            },
+            {
+              "key": "video",
+              "type": "file",
+              "src": "/path/to/video.mp4"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Search Courses",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/courses/search",
+        "query": [
+          {
+            "key": "keyword",
+            "value": "javascript"
+          },
+          {
+            "key": "category",
+            "value": "Programming"
+          },
+          {
+            "key": "level",
+            "value": "Beginner"
+          },
+          {
+            "key": "tags",
+            "value": "javascript,web development"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Get Course Details",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/course/{{course_id}}"
+      }
+    }
+  ]
+}

@@ -8,8 +8,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
+"include": [
     "server.ts",
-    "app.ts"
-  ]
+    "app.ts",
+    "routes/**/*.ts",
+    "controllers/**/*.ts"
+]
+
 }
